@@ -8,7 +8,7 @@ Em desenvolvimento.
 
 - [x] Abrir o arquivo do mapa e tratar erro de abertura
 - [x] Ler o mapa para uma matriz e imprimir
-- [ ] Encontrar o início (S) e o fim (E)
+- [x] Encontrar o início (S) e o fim (E)
 - [ ] Resolver com DFS (pilha)
 - [ ] Resolver com BFS (fila)
 - [ ] Animar a busca no terminal
@@ -18,4 +18,5 @@ Em desenvolvimento.
 
     gcc labirinto.c -o labirinto -Wall
     .\labirinto
+
 
