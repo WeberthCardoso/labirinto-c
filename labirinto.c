@@ -5,6 +5,10 @@
 #define MAX_LINHAS 10
 #define MAX_COLUNAS 30
 
+typedef struct {
+	int linha;
+	int coluna;
+} Posicao;
 int main(void){
 	setlocale(LC_ALL,"Portuguese");
 	
@@ -38,25 +42,25 @@ int main(void){
 		printf("%s\n", mapa[i]);
 	}
 	
-	int linhaS = -1, colunaS = -1;
-	int linhaE = -1, colunaE = -1;
+	Posicao inicio = {-1, -1};
+	Posicao fim = {-1, -1};
 	
 	for(int i = 0; i < altura; i++){
 		for(int j = 0; j < largura ; j++){
 			
 			if(mapa[i][j] == 'S'){
-				linhaS = i;
-				colunaS = j;
+				inicio.linha = i;
+				inicio.coluna = j;
 			}
 			
 			if(mapa[i][j] == 'E'){
-				linhaE = i;
-				colunaE = j;
+				fim.linha = i;
+				fim.coluna = j;
 			}
 		}
 	}
 	
-	if (linhaE == -1 || linhaS == -1) {
+	if (fim.linha == -1 || inicio.linha == -1) {
 		printf("\nErro: Labirinto inválido! Entrada (S) ou Saída (E) não encontrada.\n");
 		return 1; 
 	}
@@ -64,8 +68,8 @@ int main(void){
 	printf("\nAltura: %d\n", altura);
 	printf("\nLargura: %d\n", largura);
 	
-	printf("Entrada (S) encontrada na linha %d, coluna %d\n", linhaS, colunaS);
-	printf("Saída (E) encontrada na linha %d, coluna %d\n", linhaE, colunaE);
+	printf("Entrada (S) encontrada na linha %d, coluna %d\n", inicio.linha, inicio.coluna);
+	printf("Saída (E) encontrada na linha %d, coluna %d\n", fim.linha, fim.coluna);
 	
 	return 0;
 }
