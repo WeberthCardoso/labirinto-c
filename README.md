@@ -9,14 +9,17 @@ Em desenvolvimento.
 - [x] Abrir o arquivo do mapa e tratar erro de abertura
 - [x] Ler o mapa para uma matriz e imprimir
 - [x] Encontrar o início (S) e o fim (E)
-- [ ] Resolver com DFS (pilha)
-- [ ] Resolver com BFS (fila)
-- [ ] Animar a busca no terminal
+- [x] Resolver com DFS (pilha)
+- [x] Resolver com BFS (fila)
+- [x] Animar a busca no terminal
 - [ ] Gerar labirintos aleatórios
 
 ## Como compilar e rodar
 
     gcc labirinto.c -o labirinto -Wall
     .\labirinto
+
+
+
 
 
