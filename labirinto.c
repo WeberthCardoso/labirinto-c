@@ -2,17 +2,20 @@
 #include <locale.h>
 #include <string.h>
 #include <stdbool.h>
+#include <windows.h> // Para usar o Sleep() na animação
 
 #define MAX_LINHAS 10
 #define MAX_COLUNAS 30
-#define MAX_ESTRUTURA 300 // Limite seguro para Pilha e Fila
+#define MAX_ESTRUTURA 300 
 
 typedef struct {
     int linha;
     int coluna;
 } Posicao;
 
-// Estrutura e funções de pilha
+// =================================================================
+// ESTRUTURA E FUNÇÕES DA PILHA (Para DFS)
+// =================================================================
 typedef struct {
     Posicao dados[MAX_ESTRUTURA];
     int topo;
@@ -37,8 +40,9 @@ Posicao desempilhar(Pilha *p) {
     return pos;
 }
 
-// Estrutura e funções da fila 
-
+// =================================================================
+// ESTRUTURA E FUNÇÕES DA FILA (Para BFS)
+// =================================================================
 typedef struct {
     Posicao dados[MAX_ESTRUTURA];
     int frente;
@@ -64,7 +68,21 @@ Posicao desenfileirar(Fila *f) {
     return pos;
 }
 
-// Algoritmos e busca
+// =================================================================
+// FUNÇÃO AUXILIAR DE ANIMAÇÃO
+// =================================================================
+void desenharMapaAnimado(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura) {
+    system("cls"); // Limpa a tela do terminal
+    printf("========== ANIMACAO DA BUSCA ==========\n\n");
+    for (int i = 0; i < altura; i++) {
+        printf("%s\n", mapa[i]);
+    }
+    Sleep(100); // Pausa de 100 milissegundos para gerar efeito visual
+}
+
+// =================================================================
+// ALGORITMOS DE BUSCA ANIMADOS
+// =================================================================
 
 void resolverDFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Posicao inicio, Posicao fim) {
     Pilha pilha;
@@ -96,6 +114,9 @@ void resolverDFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Po
                     visitado[nl][nc] = true;
                     empilhar(&pilha, (Posicao){nl, nc});
                     if (mapa[nl][nc] != 'E') mapa[nl][nc] = '.';
+                    
+                    desenharMapaAnimado(mapa, altura); 
+                    
                     moveu = true;
                     break;
                 }
@@ -103,13 +124,15 @@ void resolverDFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Po
         }
         if (!moveu) {
             Posicao removida = desempilhar(&pilha);
-            if (mapa[removida.linha][removida.coluna] == '.') mapa[removida.linha][removida.coluna] = ' ';
+            if (mapa[removida.linha][removida.coluna] == '.') {
+                mapa[removida.linha][removida.coluna] = ' ';
+                desenharMapaAnimado(mapa, altura); 
+            }
         }
     }
     
     if (encontrou) {
         printf("\n--- Labirinto Resolvido com DFS (Pilha) ---\n");
-        for (int i = 0; i < altura; i++) printf("%s\n", mapa[i]);
     } else {
         printf("\nDFS: Não encontrou saída.\n");
     }
@@ -121,8 +144,11 @@ void resolverBFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Po
     bool visitado[MAX_LINHAS][MAX_COLUNAS] = {false};
     Posicao pai[MAX_LINHAS][MAX_COLUNAS];
     
-    for(int i=0; i<altura; i++)
-        for(int j=0; j<largura; j++) pai[i][j] = (Posicao){-1, -1};
+    for(int i=0; i<altura; i++) {
+        for(int j=0; j<largura; j++) {
+            pai[i][j] = (Posicao){-1, -1};
+        }
+    }
         
     enfileirar(&fila, inicio);
     visitado[inicio.linha][inicio.coluna] = true;
@@ -148,25 +174,38 @@ void resolverBFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Po
                     visitado[nl][nc] = true;
                     pai[nl][nc] = atual;
                     enfileirar(&fila, (Posicao){nl, nc});
+                    
+                    if (mapa[nl][nc] != 'E') {
+                        mapa[nl][nc] = 'o'; 
+                        desenharMapaAnimado(mapa, altura);
+                    }
                 }
             }
         }
     }
     
     if (encontrou) {
+        for(int i=0; i<altura; i++) {
+            for(int j=0; j<largura; j++) {
+                if(mapa[i][j] == 'o') mapa[i][j] = ' ';
+            }
+        }
+        
         Posicao passo = pai[fim.linha][fim.coluna];
         while (passo.linha != inicio.linha || passo.coluna != inicio.coluna) {
             mapa[passo.linha][passo.coluna] = '.';
+            desenharMapaAnimado(mapa, altura);
             passo = pai[passo.linha][passo.coluna];
         }
         printf("\n--- Labirinto Resolvido com BFS (Fila - Caminho Curto) ---\n");
-        for (int i = 0; i < altura; i++) printf("%s\n", mapa[i]);
     } else {
         printf("\nBFS: Não encontrou saída.\n");
     }
 }
 
-
+// =================================================================
+// FUNÇÃO PRINCIPAL
+// =================================================================
 int main(void) {
     setlocale(LC_ALL, "Portuguese");
     
@@ -180,10 +219,11 @@ int main(void) {
         return 1;
     }
     while (altura < MAX_LINHAS && fgets(mapaOriginal[altura], sizeof(mapaOriginal[altura]), arquivo) != NULL) {
-        mapaOriginal[altura][strcspn(mapaOriginal[altura], "\n")] = '\0';
+        mapaOriginal[altura][strcspn(mapaOriginal[altura], "\r\n")] = '\0';
         altura++;
     }
     fclose(arquivo);
+    
     if (altura > 0) largura = strlen(mapaOriginal[0]);
 
     Posicao inicio = {-1, -1}, fim = {-1, -1};
@@ -201,14 +241,16 @@ int main(void) {
     int opcao;
     do {
         printf("\n========== MENU LABIRINTO ==========\n");
-        printf("1. Resolver com DFS (Pilha - Profundidade)\n");
-        printf("2. Resolver com BFS (Fila - Menor Caminho)\n");
+        printf("1. Resolver com DFS (Pilha - Profundidade Animado)\n");
+        printf("2. Resolver com BFS (Fila - Menor Caminho Animado)\n");
         printf("0. Sair\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
+        
+        if (scanf("%d", &opcao) != 1) {
+            break;
+        }
 
         if (opcao == 1 || opcao == 2) {
-            // Copia o mapa original para o mapa de trabalho para limpar alterações anteriores
             for (int i = 0; i < altura; i++) strcpy(mapaTrabalho[i], mapaOriginal[i]);
 
             if (opcao == 1) {
