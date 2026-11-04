@@ -2,7 +2,7 @@
 #include <locale.h>
 #include <string.h>
 #include <stdbool.h>
-#include <windows.h> // Para usar o Sleep() na anima豫o
+#include <windows.h> 
 
 #define MAX_LINHAS 10
 #define MAX_COLUNAS 30
@@ -13,9 +13,7 @@ typedef struct {
     int coluna;
 } Posicao;
 
-// =================================================================
-// ESTRUTURA E FUN합ES DA PILHA (Para DFS)
-// =================================================================
+
 typedef struct {
     Posicao dados[MAX_ESTRUTURA];
     int topo;
@@ -40,9 +38,7 @@ Posicao desempilhar(Pilha *p) {
     return pos;
 }
 
-// =================================================================
-// ESTRUTURA E FUN합ES DA FILA (Para BFS)
-// =================================================================
+
 typedef struct {
     Posicao dados[MAX_ESTRUTURA];
     int frente;
@@ -68,9 +64,6 @@ Posicao desenfileirar(Fila *f) {
     return pos;
 }
 
-// =================================================================
-// FUN플O AUXILIAR DE ANIMA플O
-// =================================================================
 void desenharMapaAnimado(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura) {
     system("cls"); // Limpa a tela do terminal
     printf("========== ANIMACAO DA BUSCA ==========\n\n");
@@ -79,10 +72,6 @@ void desenharMapaAnimado(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura) {
     }
     Sleep(100); // Pausa de 100 milissegundos para gerar efeito visual
 }
-
-// =================================================================
-// ALGORITMOS DE BUSCA ANIMADOS
-// =================================================================
 
 void resolverDFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Posicao inicio, Posicao fim) {
     Pilha pilha;
@@ -203,9 +192,6 @@ void resolverBFS(char mapa[MAX_LINHAS][MAX_COLUNAS], int altura, int largura, Po
     }
 }
 
-// =================================================================
-// FUN플O PRINCIPAL
-// =================================================================
 int main(void) {
     setlocale(LC_ALL, "Portuguese");
     
